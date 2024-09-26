@@ -80,7 +80,12 @@ public class ContributionServiceNew implements ContributionService {
 
     private static Function<PaymentData, BigDecimal> subtract(Function<PaymentData, BigDecimal> subtractFrom,
                                                               Function<PaymentData, BigDecimal> secondAmount) {
-        return pd -> subtractFrom.apply(pd).subtract(secondAmount.apply(pd));
+        return pd -> getAmountOrZero(pd, subtractFrom)
+                .subtract(getAmountOrZero(pd, secondAmount));
+    }
+
+    private static BigDecimal getAmountOrZero(PaymentData pd, Function<PaymentData, BigDecimal> amountGetter) {
+        return Optional.ofNullable(amountGetter.apply(pd)).orElse(BigDecimal.ZERO);
     }
 
 }
